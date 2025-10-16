@@ -8,14 +8,9 @@ function SuccessContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const token = searchParams?.get("token");
-    if (token) {
-      localStorage.setItem("auth_token", token);
-      router.push("/"); // Go to dashboard
-    } else {
-      router.push("/login");
-    }
-  }, [router, searchParams]);
+    // No need to set localStorage token, rely on cookie
+    router.push("/"); // Go to dashboard
+  }, [router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
