@@ -24,22 +24,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-
   useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem("auth_token");
-    const userData = localStorage.getItem("user_data");
-
-    if (token && userData) {
+    // Verify session by calling backend verify endpoint which checks the HTTP-only cookie
+    async function verify() {
+      setLoading(true);
       try {
-        setUser(JSON.parse(userData));
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user_data");
+        const res = await fetch(
+          `${
+            process.env.NEXT_PUBLIC_AUTH_URL ||
+            "https://snaplytics-auth-backend.vercel.app"
+          }/auth/verify`,
+          { credentials: "include" }
+        );
+        if (!res.ok) {
+          setUser(null);
+        } else {
+          const data = await res.json();
+          if (data.valid && data.user) {
+            setUser(data.user as User);
+          } else {
+            setUser(null);
+          }
+        }
+      } catch (err) {
+        console.error("Auth verify failed:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
     }
-    setLoading(false);
+
+    verify();
   }, []);
 
   // Handle OAuth callback
@@ -80,10 +95,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("user_data");
-    setUser(null);
-    router.push("/login");
+    // Call backend logout to clear cookie
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_AUTH_URL ||
+        "https://snaplytics-auth-backend.vercel.app"
+      }/auth/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    ).finally(() => {
+      // Clear client-side user state
+      try {
+        localStorage.removeItem("auth_token");
+        localStorage.removeItem("user_data");
+      } catch {}
+      setUser(null);
+      router.push("/login");
+    });
   };
 
   return (
