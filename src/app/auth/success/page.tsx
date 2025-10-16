@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function AuthSuccessPage() {
+function SuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -45,7 +45,7 @@ export default function AuthSuccessPage() {
       }
 
       // Redirect to home page
-      router.push("/");
+      // router.push("/");
     } else {
       // No token found, redirect to login
       console.error("No token found in auth success callback");
@@ -68,5 +68,19 @@ export default function AuthSuccessPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function AuthSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
+      <SuccessContent />
+    </Suspense>
   );
 }
