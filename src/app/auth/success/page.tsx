@@ -8,47 +8,11 @@ function SuccessContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Get token and user data from URL parameters
     const token = searchParams?.get("token");
-    const userParam = searchParams?.get("user");
-    const email = searchParams?.get("email");
-    const name = searchParams?.get("name");
-    const picture = searchParams?.get("picture");
-    const id = searchParams?.get("id");
-
     if (token) {
-      // Store token
       localStorage.setItem("auth_token", token);
-
-      // Store user data - try to get from 'user' param first, otherwise construct from individual params
-      let userData;
-      if (userParam) {
-        try {
-          userData = JSON.parse(decodeURIComponent(userParam));
-        } catch (error) {
-          console.error("Error parsing user param:", error);
-        }
-      }
-
-      // If no user param or parsing failed, construct from individual params
-      if (!userData && (email || name || id)) {
-        userData = {
-          id: id || email || "",
-          email: email || "",
-          name: name || "",
-          picture: picture || "",
-        };
-      }
-
-      if (userData) {
-        localStorage.setItem("user_data", JSON.stringify(userData));
-      }
-
-      // Redirect to home page
-      // router.push("/");
+      router.push("/"); // Go to dashboard
     } else {
-      // No token found, redirect to login
-      console.error("No token found in auth success callback");
       router.push("/login");
     }
   }, [router, searchParams]);
@@ -60,12 +24,6 @@ function SuccessContent() {
         <p className="text-gray-600 mb-4">
           Authentication successful! Redirecting...
         </p>
-        <button
-          onClick={() => router.push("/")}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition-colors"
-        >
-          Go to Dashboard
-        </button>
       </div>
     </div>
   );
