@@ -45,10 +45,14 @@ export default function Sidebar({
 
   return (
     <aside className="w-full md:w-64 bg-white/80 border border-white/30 rounded-2xl p-4 shadow-md">
-      <h3 className="text-sm font-semibold text-slate-700 mb-3">Available Content</h3>
+      <h3 className="text-sm font-semibold text-slate-700 mb-3">
+        Available Content
+      </h3>
       {loading && <div className="text-sm text-gray-500">Loading...</div>}
       {error && <div className="text-sm text-red-500">{error}</div>}
-      {!loading && !items.length && <div className="text-sm text-gray-500">No content found</div>}
+      {!loading && !items.length && (
+        <div className="text-sm text-gray-500">No content found</div>
+      )}
       <ul className="space-y-3 mt-2">
         {items.map((it) => (
           <li key={it.id}>
@@ -57,7 +61,9 @@ export default function Sidebar({
               className="w-full text-left p-3 rounded-lg hover:bg-blue-50 transition-colors"
             >
               <div className="font-medium text-slate-800">{it.title}</div>
-              {it.summary && <div className="text-xs text-slate-500">{it.summary}</div>}
+              {it.summary && (
+                <div className="text-xs text-slate-500">{it.summary}</div>
+              )}
             </button>
           </li>
         ))}

@@ -102,8 +102,12 @@ export default function DashboardPage() {
               endpoint={undefined}
               onSelect={(item) => {
                 // fetch the content body from API if needed and trigger processing
-                const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
-                fetch(`${API_BASE}/contents/${item.id}`, { credentials: "include" })
+                const API_BASE = (
+                  process.env.NEXT_PUBLIC_API_URL || ""
+                ).replace(/\/$/, "");
+                fetch(`${API_BASE}/contents/${item.id}`, {
+                  credentials: "include",
+                })
                   .then((r) => r.json())
                   .then((data) => {
                     if (data?.body) {
@@ -118,8 +122,8 @@ export default function DashboardPage() {
               }}
             />
             <div>
-          {/* Profile Section */}
-          {/* {user && (
+              {/* Profile Section */}
+              {/* {user && (
             <div className="flex items-center gap-4 bg-white/80 border border-blue-100 rounded-xl p-4 mb-6 shadow">
               {user.picture ? (
                 <img
@@ -149,207 +153,213 @@ export default function DashboardPage() {
             </div>
           )} */}
 
-          {/* Header Section */}
-          <motion.div
-            className="text-center py-8"
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <motion.div
-              className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 shadow-lg"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.2,
-                type: "spring",
-                stiffness: 200,
-              }}
-              whileHover={{ scale: 1.1, rotate: 5 }}
-            >
-              <span className="text-2xl">
-                <img src="/icon128.png" alt="Chart Icon" />
-              </span>
-            </motion.div>
-            <motion.h1
-              className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2"
-              style={{ WebkitBackgroundClip: "text", backgroundClip: "text" }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.4 }}
-            >
-              Snaplytics
-            </motion.h1>
-            <motion.p
-              className="text-lg text-slate-700 max-w-2xl mx-auto font-medium"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              Transform your data into interactive visualizations
-            </motion.p>
-          </motion.div>
-
-          {/* Processing & Selection Controls */}
-          <motion.div
-            className="bg-white/90 backdrop-blur-lg border border-white/30 p-8 rounded-3xl shadow-xl"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            whileHover={{ y: -5 }}
-          >
-            <div className="flex flex-wrap items-center gap-4 mb-10">
-              <motion.button
-                onClick={handleProcess}
-                disabled={loading || !rawContent}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold shadow hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                whileHover={!loading ? { scale: 1.05 } : undefined}
-                whileTap={!loading ? { scale: 0.96 } : undefined}
-              >
-                {loading ? "Processing..." : "Process & Load Data"}
-              </motion.button>
-              <motion.button
-                onClick={handleLoadProcessed}
-                disabled={loading}
-                className="px-6 py-3 rounded-xl border-2 border-slate-300 text-slate-700 bg-white hover:bg-slate-50 font-semibold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                whileHover={!loading ? { scale: 1.03 } : undefined}
-                whileTap={!loading ? { scale: 0.97 } : undefined}
-              >
-                {loading ? "Loading..." : "Load Last Processed CSV"}
-              </motion.button>
-              {lastTimestamp && (
-                <span className="text-xs text-slate-500">
-                  Last processed: {new Date(lastTimestamp).toLocaleTimeString()}
-                </span>
-              )}
-              {rowCount !== null && (
-                <span className="text-xs text-slate-500">Rows: {rowCount}</span>
-              )}
-              {error && (
-                <span className="text-sm text-red-600 font-medium">
-                  {error}
-                </span>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Header Section */}
               <motion.div
-                className="space-y-2"
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
-              >
-                <label className="block text-sm font-semibold text-slate-800 mb-2">
-                  X Axis Field
-                </label>
-                <motion.select
-                  className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
-                  value={xField}
-                  onChange={(e) => setXField(e.target.value)}
-                  whileFocus={{ scale: 1.02 }}
-                  whileHover={{ y: -2 }}
-                >
-                  <option value="">Choose X axis...</option>
-                  {fields.map((f) => (
-                    <option key={f} value={f}>
-                      {f}
-                    </option>
-                  ))}
-                </motion.select>
-              </motion.div>
-
-              <motion.div
-                className="space-y-2"
-                initial={{ opacity: 0, y: 30 }}
+                className="text-center py-8"
+                initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.4 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
               >
-                <label className="block text-sm font-semibold text-slate-800 mb-2">
-                  Y Axis Field
-                </label>
-                <motion.select
-                  className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
-                  value={yField}
-                  onChange={(e) => setYField(e.target.value)}
-                  whileFocus={{ scale: 1.02 }}
-                  whileHover={{ y: -2 }}
-                >
-                  <option value="">Choose Y axis...</option>
-                  {fields.map((f) => (
-                    <option key={f} value={f}>
-                      {f}
-                    </option>
-                  ))}
-                </motion.select>
-              </motion.div>
-
-              <motion.div
-                className="space-y-2"
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 1.6 }}
-              >
-                <label className="block text-sm font-semibold text-slate-800 mb-2">
-                  Visualization Type
-                </label>
-                <motion.select
-                  className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
-                  value={chartType}
-                  onChange={(e) => setChartType(e.target.value)}
-                  whileFocus={{ scale: 1.02 }}
-                  whileHover={{ y: -2 }}
-                >
-                  <option value="line">📈 Line Chart</option>
-                  <option value="bar">📊 Bar Chart</option>
-                  <option value="scatter">⚪ Scatter Plot</option>
-                  <option value="pie">🥧 Pie Chart</option>
-                </motion.select>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* Chart Renderer */}
-          <motion.div
-            className="bg-white/90 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl overflow-hidden"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.8 }}
-            whileHover={{ y: -5 }}
-          >
-            <motion.div
-              className="p-6 border-b border-slate-200/50"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 2 }}
-            >
-              <h2 className="text-xl font-semibold text-slate-800 flex items-center">
-                <motion.span
-                  className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"
-                  animate={{ scale: [1, 1.2, 1] }}
+                <motion.div
+                  className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 shadow-lg"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
                   transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    delay: 0.5,
+                    duration: 0.6,
+                    delay: 0.2,
+                    type: "spring",
+                    stiffness: 200,
                   }}
-                ></motion.span>
-                Data Visualization
-              </h2>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 2.2 }}
-            >
-              <ChartRenderer
-                data={data}
-                xField={xField}
-                yField={yField}
-                chartType={chartType}
-              />
-            </motion.div>
-          </motion.div>
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <span className="text-2xl">
+                    <img src="/icon128.png" alt="Chart Icon" />
+                  </span>
+                </motion.div>
+                <motion.h1
+                  className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2"
+                  style={{
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.4 }}
+                >
+                  Snaplytics
+                </motion.h1>
+                <motion.p
+                  className="text-lg text-slate-700 max-w-2xl mx-auto font-medium"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                >
+                  Transform your data into interactive visualizations
+                </motion.p>
+              </motion.div>
+
+              {/* Processing & Selection Controls */}
+              <motion.div
+                className="bg-white/90 backdrop-blur-lg border border-white/30 p-8 rounded-3xl shadow-xl"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="flex flex-wrap items-center gap-4 mb-10">
+                  <motion.button
+                    onClick={handleProcess}
+                    disabled={loading || !rawContent}
+                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold shadow hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={!loading ? { scale: 1.05 } : undefined}
+                    whileTap={!loading ? { scale: 0.96 } : undefined}
+                  >
+                    {loading ? "Processing..." : "Process & Load Data"}
+                  </motion.button>
+                  <motion.button
+                    onClick={handleLoadProcessed}
+                    disabled={loading}
+                    className="px-6 py-3 rounded-xl border-2 border-slate-300 text-slate-700 bg-white hover:bg-slate-50 font-semibold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={!loading ? { scale: 1.03 } : undefined}
+                    whileTap={!loading ? { scale: 0.97 } : undefined}
+                  >
+                    {loading ? "Loading..." : "Load Last Processed CSV"}
+                  </motion.button>
+                  {lastTimestamp && (
+                    <span className="text-xs text-slate-500">
+                      Last processed:{" "}
+                      {new Date(lastTimestamp).toLocaleTimeString()}
+                    </span>
+                  )}
+                  {rowCount !== null && (
+                    <span className="text-xs text-slate-500">
+                      Rows: {rowCount}
+                    </span>
+                  )}
+                  {error && (
+                    <span className="text-sm text-red-600 font-medium">
+                      {error}
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 1.2 }}
+                  >
+                    <label className="block text-sm font-semibold text-slate-800 mb-2">
+                      X Axis Field
+                    </label>
+                    <motion.select
+                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
+                      value={xField}
+                      onChange={(e) => setXField(e.target.value)}
+                      whileFocus={{ scale: 1.02 }}
+                      whileHover={{ y: -2 }}
+                    >
+                      <option value="">Choose X axis...</option>
+                      {fields.map((f) => (
+                        <option key={f} value={f}>
+                          {f}
+                        </option>
+                      ))}
+                    </motion.select>
+                  </motion.div>
+
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 1.4 }}
+                  >
+                    <label className="block text-sm font-semibold text-slate-800 mb-2">
+                      Y Axis Field
+                    </label>
+                    <motion.select
+                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
+                      value={yField}
+                      onChange={(e) => setYField(e.target.value)}
+                      whileFocus={{ scale: 1.02 }}
+                      whileHover={{ y: -2 }}
+                    >
+                      <option value="">Choose Y axis...</option>
+                      {fields.map((f) => (
+                        <option key={f} value={f}>
+                          {f}
+                        </option>
+                      ))}
+                    </motion.select>
+                  </motion.div>
+
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 1.6 }}
+                  >
+                    <label className="block text-sm font-semibold text-slate-800 mb-2">
+                      Visualization Type
+                    </label>
+                    <motion.select
+                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
+                      value={chartType}
+                      onChange={(e) => setChartType(e.target.value)}
+                      whileFocus={{ scale: 1.02 }}
+                      whileHover={{ y: -2 }}
+                    >
+                      <option value="line">📈 Line Chart</option>
+                      <option value="bar">📊 Bar Chart</option>
+                      <option value="scatter">⚪ Scatter Plot</option>
+                      <option value="pie">🥧 Pie Chart</option>
+                    </motion.select>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Chart Renderer */}
+              <motion.div
+                className="bg-white/90 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl overflow-hidden"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 1.8 }}
+                whileHover={{ y: -5 }}
+              >
+                <motion.div
+                  className="p-6 border-b border-slate-200/50"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.6, delay: 2 }}
+                >
+                  <h2 className="text-xl font-semibold text-slate-800 flex items-center">
+                    <motion.span
+                      className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        delay: 0.5,
+                      }}
+                    ></motion.span>
+                    Data Visualization
+                  </h2>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 2.2 }}
+                >
+                  <ChartRenderer
+                    data={data}
+                    xField={xField}
+                    yField={yField}
+                    chartType={chartType}
+                  />
+                </motion.div>
+              </motion.div>
             </div>
           </div>
         </div>
