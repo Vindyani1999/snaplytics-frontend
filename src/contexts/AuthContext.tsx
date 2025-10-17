@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { useRouter } from "next/navigation";
 import { authFetch } from "@/lib/api";
 
@@ -76,10 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function verifySession() {
       try {
         setLoading(true);
-        const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || "https://snaplytics-auth-backend.vercel.app";
+        const AUTH_URL =
+          process.env.NEXT_PUBLIC_AUTH_URL ||
+          "https://snaplytics-auth-backend.vercel.app";
 
         // First try cookie-based verify (the backend should check cookie when credentials included)
-        const res = await fetch(`${AUTH_URL}/auth/verify`, { credentials: "include" });
+        const res = await fetch(`${AUTH_URL}/auth/verify`, {
+          credentials: "include",
+        });
         if (res.ok) {
           const json = await res.json();
           if (json?.valid && mounted) {
@@ -91,10 +101,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         // Fallback: check localStorage token and try to verify using Authorization header
-        const savedToken = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+        const savedToken =
+          typeof window !== "undefined"
+            ? localStorage.getItem("auth_token")
+            : null;
         if (savedToken) {
           try {
-            const vres = await authFetch(`${AUTH_URL}/auth/verify`, { method: "GET" });
+            const vres = await authFetch(`${AUTH_URL}/auth/verify`, {
+              method: "GET",
+            });
             if (vres.ok) {
               const vjson = await vres.json();
               if (vjson?.valid && mounted) {
@@ -169,8 +184,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Clear token and user state
     (async () => {
       try {
-        const AUTH_URL = process.env.NEXT_PUBLIC_AUTH_URL || "https://snaplytics-auth-backend.vercel.app";
-        await fetch(`${AUTH_URL}/auth/logout`, { method: "POST", credentials: "include" });
+        const AUTH_URL =
+          process.env.NEXT_PUBLIC_AUTH_URL ||
+          "https://snaplytics-auth-backend.vercel.app";
+        await fetch(`${AUTH_URL}/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
       } catch (err) {
         // ignore
       }

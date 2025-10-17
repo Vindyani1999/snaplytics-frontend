@@ -82,12 +82,17 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
  * authFetch: wrapper that attaches Authorization header when a token is available in localStorage
  */
 export async function authFetch(input: RequestInfo, init?: RequestInit) {
-  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
   const headers = new Headers(init?.headers as HeadersInit | undefined);
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
-  return fetch(input, { credentials: token ? "omit" : "include", ...init, headers });
+  return fetch(input, {
+    credentials: token ? "omit" : "include",
+    ...init,
+    headers,
+  });
 }
 
 /**
@@ -138,7 +143,9 @@ export interface ProcessedCsvResponse {
 }
 
 // Attempt to convert numeric-looking strings to numbers for charting
-function coerceDatasetTypes(rows: Array<Record<string, string>>): Record<string, any>[] {
+function coerceDatasetTypes(
+  rows: Array<Record<string, string>>
+): Record<string, any>[] {
   return rows.map((row) => {
     const obj: Record<string, any> = {};
     for (const [k, v] of Object.entries(row)) {
@@ -152,7 +159,10 @@ function coerceDatasetTypes(rows: Array<Record<string, string>>): Record<string,
         continue;
       }
       const num = Number(trimmed);
-      obj[k] = Number.isFinite(num) && /^-?\d*(?:\.\d+)?$/.test(trimmed) ? num : trimmed;
+      obj[k] =
+        Number.isFinite(num) && /^-?\d*(?:\.\d+)?$/.test(trimmed)
+          ? num
+          : trimmed;
     }
     return obj;
   });
@@ -191,7 +201,9 @@ export async function getProcessedData(): Promise<{
   if (!API_BASE) {
     throw new Error("NEXT_PUBLIC_API_URL is not configured");
   }
-  const res = await fetch(`${API_BASE}/get_processed_data`, { cache: "no-store" });
+  const res = await fetch(`${API_BASE}/get_processed_data`, {
+    cache: "no-store",
+  });
   const json: ProcessedCsvResponse = await res.json();
   if (!res.ok) {
     throw new Error(json?.error || `Backend error: ${res.status}`);
@@ -199,7 +211,9 @@ export async function getProcessedData(): Promise<{
   if (json.status === "error") {
     throw new Error(json.error || "Unknown backend error");
   }
-  const rows: Record<string, any>[] = Array.isArray(json?.rows) ? (json.rows as any) : [];
+  const rows: Record<string, any>[] = Array.isArray(json?.rows)
+    ? (json.rows as any)
+    : [];
   const dataset = rows.map(coerceRow);
   const headers = dataset.length ? Object.keys(dataset[0]) : [];
   return { dataset, headers, meta: json };

@@ -47,14 +47,20 @@ export default function UserDataViewer({ email }: { email: string }) {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">User data for {email}</h2>
         <div>
-          <button className="btn" onClick={handleAnalyze} disabled={!rows.length || loading}>
+          <button
+            className="btn"
+            onClick={handleAnalyze}
+            disabled={!rows.length || loading}
+          >
             {loading ? "Processing…" : "Analyze"}
           </button>
         </div>
       </div>
 
       {error && <div className="text-red-500">{error}</div>}
-      {!loading && !rows.length && <div className="text-sm text-slate-500">No rows found</div>}
+      {!loading && !rows.length && (
+        <div className="text-sm text-slate-500">No rows found</div>
+      )}
 
       {rows.length > 0 && (
         <div className="overflow-auto border rounded p-2">
