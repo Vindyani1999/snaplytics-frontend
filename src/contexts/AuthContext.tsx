@@ -16,69 +16,58 @@ interface AuthContextType {
   login: () => void;
   logout: () => void;
   isAuthenticated: boolean;
+  token: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  // On mount, check if token exists in localStorage
   useEffect(() => {
-    // Verify session by calling backend verify endpoint which checks the HTTP-only cookie
-    async function verify() {
-      setLoading(true);
+    const savedToken = localStorage.getItem("auth_token");
+    if (savedToken) {
       try {
-        const res = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_AUTH_URL ||
-            "https://snaplytics-auth-backend.vercel.app"
-          }/auth/verify`,
-          { credentials: "include" }
-        );
-        if (!res.ok) {
-          setUser(null);
-        } else {
-          const data = await res.json();
-          if (data.valid && data.user) {
-            setUser(data.user as User);
-          } else {
-            setUser(null);
-          }
-        }
+        const payload = JSON.parse(atob(savedToken.split(".")[1]));
+        setUser(payload);
+        setToken(savedToken);
       } catch (err) {
-        console.error("Auth verify failed:", err);
-        setUser(null);
-      } finally {
-        setLoading(false);
+        console.error("Invalid token in localStorage", err);
+        localStorage.removeItem("auth_token");
       }
     }
-
-    verify();
+    setLoading(false);
   }, []);
 
-  // Handle OAuth callback
+  // Handle OAuth callback with token in URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    const userParam = params.get("user");
+    const tokenFromUrl = params.get("token");
 
-    if (token && userParam) {
+    if (tokenFromUrl) {
       try {
-        const userData = JSON.parse(decodeURIComponent(userParam));
-        localStorage.setItem("auth_token", token);
-        localStorage.setItem("user_data", JSON.stringify(userData));
-        setUser(userData);
+        // Decode token to get user info
+        const payload = JSON.parse(atob(tokenFromUrl.split(".")[1]));
+        setUser(payload);
+        setToken(tokenFromUrl);
 
-        // Clean up URL
+        // Store token in localStorage
+        localStorage.setItem("auth_token", tokenFromUrl);
+
+        // Clean URL
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname
         );
-        router.push("/");
-      } catch (error) {
-        console.error("Error processing auth callback:", error);
+
+        router.push("/"); // redirect to home or dashboard
+      } catch (err) {
+        console.error("Error processing OAuth token:", err);
       }
     }
   }, [router]);
@@ -86,40 +75,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = () => {
     const authUrl =
       process.env.NEXT_PUBLIC_AUTH_URL ||
-      "https://snaplytics-auth-backend.vercel.app/";
-    // Ensure authUrl ends with /
-    const baseUrl = authUrl.endsWith("/") ? authUrl : `${authUrl}/`;
-
-    // Try direct redirect - backend should handle OAuth flow
-    window.location.href = `${baseUrl}auth/google`;
+      "https://snaplytics-auth-backend.vercel.app";
+    window.location.href = `${authUrl}/auth/google`;
   };
 
   const logout = () => {
-    // Call backend logout to clear cookie
-    fetch(
-      `${
-        process.env.NEXT_PUBLIC_AUTH_URL ||
-        "https://snaplytics-auth-backend.vercel.app"
-      }/auth/logout`,
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    ).finally(() => {
-      // Clear client-side user state
-      try {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("user_data");
-      } catch {}
-      setUser(null);
-      router.push("/login");
-    });
+    // Clear token and user state
+    localStorage.removeItem("auth_token");
+    setToken(null);
+    setUser(null);
+    router.push("/login");
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        token,
         loading,
         login,
         logout,
@@ -133,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
