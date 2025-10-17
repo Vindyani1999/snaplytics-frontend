@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import ChartRenderer from "@/components/ChartRenderer";
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import Sidebar from "@/components/Sidebar";
 import {
   processScrapeData,
   getNumericFields,
@@ -96,6 +97,27 @@ export default function DashboardPage() {
       <Header />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
         <div className="max-w-7xl mx-auto p-6 space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6">
+            <Sidebar
+              endpoint={undefined}
+              onSelect={(item) => {
+                // fetch the content body from API if needed and trigger processing
+                const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+                fetch(`${API_BASE}/contents/${item.id}`, { credentials: "include" })
+                  .then((r) => r.json())
+                  .then((data) => {
+                    if (data?.body) {
+                      setRawContent(data.body);
+                      handleProcess();
+                    }
+                  })
+                  .catch((err) => {
+                    console.error("Failed to load content body:", err);
+                    setError("Failed to load content");
+                  });
+              }}
+            />
+            <div>
           {/* Profile Section */}
           {/* {user && (
             <div className="flex items-center gap-4 bg-white/80 border border-blue-100 rounded-xl p-4 mb-6 shadow">
@@ -328,6 +350,8 @@ export default function DashboardPage() {
               />
             </motion.div>
           </motion.div>
+            </div>
+          </div>
         </div>
       </div>
     </ProtectedRoute>
