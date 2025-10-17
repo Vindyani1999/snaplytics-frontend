@@ -12,6 +12,7 @@ import {
   getProcessedData,
 } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import UserDataViewer from "@/components/UserDataViewer";
 
 export default function DashboardPage() {
   const [data, setData] = useState<any[]>([]);
@@ -154,6 +155,11 @@ export default function DashboardPage() {
           )} */}
 
               {/* Header Section */}
+              {user && (
+                <div className="mb-6">
+                  <UserDataViewer email={user.email} />
+                </div>
+              )}
               <motion.div
                 className="text-center py-8"
                 initial={{ opacity: 0, y: -50 }}

@@ -79,6 +79,18 @@ function toDataset(parsed: ParsedFormattedData): Record<string, any>[] {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
 
 /**
+ * authFetch: wrapper that attaches Authorization header when a token is available in localStorage
+ */
+export async function authFetch(input: RequestInfo, init?: RequestInit) {
+  const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+  const headers = new Headers(init?.headers as HeadersInit | undefined);
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  return fetch(input, { credentials: token ? "omit" : "include", ...init, headers });
+}
+
+/**
  * Calls backend /process endpoint with given fields and raw content, returning a dataset
  */
 export async function processScrapeData(
