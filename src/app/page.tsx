@@ -279,7 +279,7 @@ export default function DashboardPage() {
             transition={{ duration: 0.3, delay: 0.1 }}
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-800">
                   Fields (comma-separated)
                 </label>
@@ -290,7 +290,7 @@ export default function DashboardPage() {
                   value={requestedFieldsInput}
                   onChange={(e) => setRequestedFieldsInput(e.target.value)}
                 />
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-800">
