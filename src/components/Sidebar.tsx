@@ -15,13 +15,9 @@ interface ContentItem {
 export default function Sidebar({
   endpoint,
   onSelect,
-  collapsed = false,
-  onToggle,
 }: {
   endpoint?: string;
   onSelect?: (item: ContentItem | ContentItem[]) => void;
-  collapsed?: boolean;
-  onToggle?: (next: boolean) => void;
 }) {
   const { user } = useAuth();
   const [items, setItems] = useState<ContentItem[]>([]);
@@ -136,24 +132,11 @@ export default function Sidebar({
       aria-label="Available content sidebar"
       className="fixed left-4 top-20 z-40 h-[calc(100vh-5rem)]"
     >
-      <div
-        className={`h-full bg-white/90 border border-white/30 rounded-2xl shadow-md overflow-auto transition-all ${
-          collapsed ? "w-16 px-2 py-3" : "w-64 p-4"
-        }`}
-      >
+      <div className="h-full bg-white/90 border border-white/30 rounded-2xl shadow-md overflow-auto transition-all w-64 p-4">
         <div className="flex items-center justify-between mb-3">
-          {!collapsed && (
-            <h3 className="text-sm font-semibold text-slate-700">
-              Available Content
-            </h3>
-          )}
-          <button
-            onClick={() => onToggle?.(!collapsed)}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="ml-2 text-xs text-slate-500 bg-transparent hover:bg-slate-100 rounded-full p-1"
-          >
-            {collapsed ? "»" : "«"}
-          </button>
+          <h3 className="text-sm font-semibold text-slate-700">
+            Available Content
+          </h3>
         </div>
 
         {loading && <div className="text-sm text-gray-500">Loading...</div>}
@@ -166,9 +149,7 @@ export default function Sidebar({
           {Object.entries(grouped).map(([timestamp, group]) => (
             <li key={timestamp} className="mb-2">
               <button
-                className={`w-full flex items-center gap-2 text-left font-semibold text-blue-700 ${
-                  collapsed ? "p-2" : "p-3"
-                }`}
+                className="w-full flex items-center gap-2 text-left font-semibold text-blue-700 p-3"
                 onClick={() =>
                   setExpanded((prev) => ({
                     ...prev,
@@ -179,18 +160,14 @@ export default function Sidebar({
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                   🕒
                 </span>
-                {!collapsed && (
-                  <span className="flex-1">
-                    {timestamp === "unknown-0"
-                      ? "Unknown time"
-                      : new Date(timestamp).toLocaleString()}
-                  </span>
-                )}
-                {!collapsed && (
-                  <span className="text-xs text-slate-500">
-                    {group.length} item(s)
-                  </span>
-                )}
+                <span className="flex-1">
+                  {timestamp === "unknown-0"
+                    ? "Unknown time"
+                    : new Date(timestamp).toLocaleString()}
+                </span>
+                <span className="text-xs text-slate-500">
+                  {group.length} item(s)
+                </span>
                 <span className="ml-auto">
                   {expanded[timestamp] ? "▼" : "►"}
                 </span>
@@ -206,17 +183,16 @@ export default function Sidebar({
                       {group.length !== 1 ? "s" : ""})
                     </button>
                   </li>
-                  {!collapsed &&
-                    group.map((it) => (
-                      <li key={it.id}>
-                        <button
-                          onClick={() => onSelect?.(it)}
-                          className="w-full text-left rounded hover:bg-blue-50 px-2 py-1 text-slate-700 text-xs"
-                        >
-                          {it.title}
-                        </button>
-                      </li>
-                    ))}
+                  {group.map((it) => (
+                    <li key={it.id}>
+                      <button
+                        onClick={() => onSelect?.(it)}
+                        className="w-full text-left rounded hover:bg-blue-50 px-2 py-1 text-slate-700 text-xs"
+                      >
+                        {it.title}
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               )}
             </li>
