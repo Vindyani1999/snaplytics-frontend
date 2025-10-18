@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import ChartRenderer from "@/components/ChartRenderer";
 import Header from "@/components/Header";
@@ -20,6 +20,9 @@ export default function DashboardPage() {
   const [xField, setXField] = useState<string>("");
   const [yField, setYField] = useState<string>("");
   const [chartType, setChartType] = useState("line");
+  const [singleFieldMode, setSingleFieldMode] = useState<
+    "frequency" | "histogram" | "top10" | "bottom10"
+  >("frequency");
   // New states for backend processing
   const [rawContent, setRawContent] = useState("");
   const [requestedFieldsInput, setRequestedFieldsInput] = useState("");
@@ -90,6 +93,167 @@ export default function DashboardPage() {
       setLoading(false);
     }
   }
+
+  // Helpers to analyze data for single-field selections
+  const isNumeric = (v: any) => {
+    if (v == null) return false;
+    const n = Number(
+      String(v)
+        .toString()
+        .replace(/[^0-9.\-]/g, "")
+    );
+    return Number.isFinite(n);
+  };
+
+  const fieldIsNumeric = (field: string) => {
+    if (!field) return false;
+    let total = 0,
+      numeric = 0;
+    for (let i = 0; i < data.length && i < 50; i++) {
+      const val = (data[i] || {})[field];
+      if (val !== undefined) {
+        total++;
+        if (isNumeric(val)) numeric++;
+      }
+    }
+    return total > 0 && numeric / total > 0.6; // majority numeric
+  };
+
+  const buildFrequency = (field: string) => {
+    const counts: Record<string, number> = {};
+    data.forEach((row) => {
+      const key = String(row[field] ?? "(empty)");
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    const arr = Object.entries(counts)
+      .map(([value, count]) => ({ value, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20);
+    return { dataset: arr, x: "value", y: "count", type: "bar" as const };
+  };
+
+  const buildHistogram = (field: string, bins = 10) => {
+    const nums = data
+      .map((row) => Number(String(row[field]).replace(/[^0-9.\-]/g, "")))
+      .filter((n) => Number.isFinite(n));
+    if (!nums.length)
+      return { dataset: [], x: "bin", y: "count", type: "bar" as const };
+    const min = Math.min(...nums);
+    const max = Math.max(...nums);
+    const width = (max - min || 1) / bins;
+    const counts = new Array(bins).fill(0);
+    nums.forEach((n) => {
+      let idx = Math.floor((n - min) / width);
+      if (idx >= bins) idx = bins - 1;
+      if (idx < 0) idx = 0;
+      counts[idx]++;
+    });
+    const dataset = counts.map((c, i) => ({
+      bin: `${(min + i * width).toFixed(1)} - ${(min + (i + 1) * width).toFixed(
+        1
+      )}`,
+      count: c,
+    }));
+    return { dataset, x: "bin", y: "count", type: "bar" as const };
+  };
+
+  const buildTopBottom = (
+    field: string,
+    k = 10,
+    order: "desc" | "asc" = "desc"
+  ) => {
+    const withVal = data
+      .map((row, idx) => ({
+        label: String(row.name ?? `#${idx + 1}`),
+        value: Number(String(row[field]).replace(/[^0-9.\-]/g, "")),
+      }))
+      .filter((r) => Number.isFinite(r.value));
+    const sorted = withVal.sort((a, b) =>
+      order === "desc" ? b.value - a.value : a.value - b.value
+    );
+    const topk = sorted.slice(0, k);
+    return { dataset: topk, x: "label", y: "value", type: "bar" as const };
+  };
+
+  const availableFields = useMemo(() => {
+    const entered = requestedFieldsInput
+      .split(",")
+      .map((f) => f.trim())
+      .filter(Boolean);
+    return entered.length ? entered : fields;
+  }, [requestedFieldsInput, fields]);
+
+  const singleFieldSelected = Boolean(xField) !== Boolean(yField);
+
+  const { displayData, displayX, displayY, displayType } = useMemo(() => {
+    // default: original dataset and chosen chart type
+    if (!singleFieldSelected || !data.length) {
+      return {
+        displayData: data,
+        displayX: xField,
+        displayY: yField,
+        displayType: chartType,
+      };
+    }
+    const field = xField || yField;
+    if (!field)
+      return {
+        displayData: data,
+        displayX: xField,
+        displayY: yField,
+        displayType: chartType,
+      };
+    const numeric = fieldIsNumeric(field);
+    if (!numeric) {
+      // categorical: frequency distribution
+      const res = buildFrequency(field);
+      return {
+        displayData: res.dataset as any[],
+        displayX: res.x,
+        displayY: res.y,
+        displayType: res.type,
+      };
+    }
+    switch (singleFieldMode) {
+      case "histogram": {
+        const res = buildHistogram(field);
+        return {
+          displayData: res.dataset as any[],
+          displayX: res.x,
+          displayY: res.y,
+          displayType: res.type,
+        };
+      }
+      case "top10": {
+        const res = buildTopBottom(field, 10, "desc");
+        return {
+          displayData: res.dataset as any[],
+          displayX: res.x,
+          displayY: res.y,
+          displayType: res.type,
+        };
+      }
+      case "bottom10": {
+        const res = buildTopBottom(field, 10, "asc");
+        return {
+          displayData: res.dataset as any[],
+          displayX: res.x,
+          displayY: res.y,
+          displayType: res.type,
+        };
+      }
+      case "frequency":
+      default: {
+        const res = buildFrequency(field);
+        return {
+          displayData: res.dataset as any[],
+          displayX: res.x,
+          displayY: res.y,
+          displayType: res.type,
+        };
+      }
+    }
+  }, [singleFieldSelected, data, xField, yField, chartType, singleFieldMode]);
 
   // Initial dataset is empty until user processes raw content.
 
@@ -346,28 +510,59 @@ export default function DashboardPage() {
                     </motion.select>
                   </motion.div>
 
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 1.6 }}
-                  >
-                    <label className="block text-sm font-semibold text-slate-800 mb-2">
-                      Visualization Type
-                    </label>
-                    <motion.select
-                      className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
-                      value={chartType}
-                      onChange={(e) => setChartType(e.target.value)}
-                      whileFocus={{ scale: 1.02 }}
-                      whileHover={{ y: -2 }}
+                  {Boolean(xField) !== Boolean(yField) ? (
+                    <motion.div
+                      className="space-y-2"
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: 1.6 }}
                     >
-                      <option value="line">📈 Line Chart</option>
-                      <option value="bar">📊 Bar Chart</option>
-                      <option value="scatter">⚪ Scatter Plot</option>
-                      <option value="pie">🥧 Pie Chart</option>
-                    </motion.select>
-                  </motion.div>
+                      <label className="block text-sm font-semibold text-slate-800 mb-2">
+                        Single-field analysis
+                      </label>
+                      <motion.select
+                        className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
+                        value={singleFieldMode}
+                        onChange={(e) =>
+                          setSingleFieldMode(e.target.value as any)
+                        }
+                        whileFocus={{ scale: 1.02 }}
+                        whileHover={{ y: -2 }}
+                      >
+                        <option value="frequency">
+                          🔢 Frequency (categories)
+                        </option>
+                        <option value="histogram">
+                          📊 Histogram (numeric)
+                        </option>
+                        <option value="top10">⬆️ Top 10 (numeric)</option>
+                        <option value="bottom10">⬇️ Bottom 10 (numeric)</option>
+                      </motion.select>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      className="space-y-2"
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: 1.6 }}
+                    >
+                      <label className="block text-sm font-semibold text-slate-800 mb-2">
+                        Visualization Type
+                      </label>
+                      <motion.select
+                        className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
+                        value={chartType}
+                        onChange={(e) => setChartType(e.target.value)}
+                        whileFocus={{ scale: 1.02 }}
+                        whileHover={{ y: -2 }}
+                      >
+                        <option value="line">📈 Line Chart</option>
+                        <option value="bar">📊 Bar Chart</option>
+                        <option value="scatter">⚪ Scatter Plot</option>
+                        <option value="pie">🥧 Pie Chart</option>
+                      </motion.select>
+                    </motion.div>
+                  )}
                 </div>
               </motion.div>
 
@@ -405,10 +600,10 @@ export default function DashboardPage() {
                   transition={{ duration: 0.8, delay: 2.2 }}
                 >
                   <ChartRenderer
-                    data={data}
-                    xField={xField}
-                    yField={yField}
-                    chartType={chartType}
+                    data={displayData}
+                    xField={displayX}
+                    yField={displayY}
+                    chartType={displayType}
                   />
                 </motion.div>
               </motion.div>
