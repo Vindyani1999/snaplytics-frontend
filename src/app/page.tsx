@@ -311,51 +311,15 @@ export default function DashboardPage() {
               />
             </div>
             <div
-              className="flex-1 overflow-y-auto"
+              className="flex-1 overflow-y-auto space-y-6"
               style={{ maxHeight: "calc(100vh - 6rem)" }}
             >
-              {/* Profile Section */}
-              {/* {user && (
-            <div className="flex items-center gap-4 bg-white/80 border border-blue-100 rounded-xl p-4 mb-6 shadow">
-              {user.picture ? (
-                <img
-                  src={user.picture}
-                  alt={user.name}
-                  className="w-14 h-14 rounded-full border-2 border-blue-500"
-                />
-              ) : (
-                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">
-                    {user.name?.charAt(0) || "U"}
-                  </span>
-                </div>
-              )}
-              <div>
-                <div className="font-semibold text-lg text-blue-700">
-                  {user.name}
-                </div>
-                <div className="text-sm text-gray-600">{user.email}</div>
-              </div>
-              <button
-                onClick={logout}
-                className="ml-auto px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-semibold shadow transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          )} */}
-
-              {/* Header Section */}
-              {user && (
-                <div className="mb-6">
-                  <UserDataViewer email={user.email} />
-                </div>
-              )}
+              {/* Logo and Title */}
               <motion.div
-                className="text-center py-8"
-                initial={{ opacity: 0, y: -50 }}
+                className="text-center py-4"
+                initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                transition={{ duration: 0.6 }}
               >
                 <motion.div
                   className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 shadow-lg"
@@ -397,13 +361,12 @@ export default function DashboardPage() {
 
               {/* Processing & Selection Controls */}
               <motion.div
-                className="bg-white/90 backdrop-blur-lg border border-white/30 p-8 rounded-3xl shadow-xl"
+                className="bg-white/90 backdrop-blur-lg border border-white/30 p-6 rounded-3xl shadow-xl"
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
-                whileHover={{ y: -5 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
               >
-                <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="flex flex-wrap items-center gap-4 mb-4">
                   <input
                     type="text"
                     className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full md:w-80"
@@ -447,22 +410,15 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 1.2 }}
-                  >
-                    <label className="block text-sm font-semibold text-slate-800 mb-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-slate-800">
                       X Axis Field
                     </label>
-                    <motion.select
+                    <select
                       className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
                       value={xField}
                       onChange={(e) => setXField(e.target.value)}
-                      whileFocus={{ scale: 1.02 }}
-                      whileHover={{ y: -2 }}
                     >
                       <option value="">Choose X axis...</option>
                       {(requestedFieldsInput.trim()
@@ -476,24 +432,17 @@ export default function DashboardPage() {
                           {f}
                         </option>
                       ))}
-                    </motion.select>
-                  </motion.div>
+                    </select>
+                  </div>
 
-                  <motion.div
-                    className="space-y-2"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 1.4 }}
-                  >
-                    <label className="block text-sm font-semibold text-slate-800 mb-2">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-slate-800">
                       Y Axis Field
                     </label>
-                    <motion.select
+                    <select
                       className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
                       value={yField}
                       onChange={(e) => setYField(e.target.value)}
-                      whileFocus={{ scale: 1.02 }}
-                      whileHover={{ y: -2 }}
                     >
                       <option value="">Choose Y axis...</option>
                       {(requestedFieldsInput.trim()
@@ -507,27 +456,20 @@ export default function DashboardPage() {
                           {f}
                         </option>
                       ))}
-                    </motion.select>
-                  </motion.div>
+                    </select>
+                  </div>
 
                   {Boolean(xField) !== Boolean(yField) ? (
-                    <motion.div
-                      className="space-y-2"
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 1.6 }}
-                    >
-                      <label className="block text-sm font-semibold text-slate-800 mb-2">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-slate-800">
                         Single-field analysis
                       </label>
-                      <motion.select
+                      <select
                         className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
                         value={singleFieldMode}
                         onChange={(e) =>
                           setSingleFieldMode(e.target.value as any)
                         }
-                        whileFocus={{ scale: 1.02 }}
-                        whileHover={{ y: -2 }}
                       >
                         <option value="frequency">
                           🔢 Frequency (categories)
@@ -537,76 +479,79 @@ export default function DashboardPage() {
                         </option>
                         <option value="top10">⬆️ Top 10 (numeric)</option>
                         <option value="bottom10">⬇️ Bottom 10 (numeric)</option>
-                      </motion.select>
-                    </motion.div>
+                      </select>
+                    </div>
                   ) : (
-                    <motion.div
-                      className="space-y-2"
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 1.6 }}
-                    >
-                      <label className="block text-sm font-semibold text-slate-800 mb-2">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-slate-800">
                         Visualization Type
                       </label>
-                      <motion.select
+                      <select
                         className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white/80 backdrop-blur-sm focus:border-pink-500 focus:ring-2 focus:ring-pink-200 transition-all duration-200 shadow-sm hover:shadow-md text-slate-800 font-medium"
                         value={chartType}
                         onChange={(e) => setChartType(e.target.value)}
-                        whileFocus={{ scale: 1.02 }}
-                        whileHover={{ y: -2 }}
                       >
                         <option value="line">📈 Line Chart</option>
                         <option value="bar">📊 Bar Chart</option>
                         <option value="scatter">⚪ Scatter Plot</option>
                         <option value="pie">🥧 Pie Chart</option>
-                      </motion.select>
-                    </motion.div>
+                      </select>
+                    </div>
                   )}
                 </div>
               </motion.div>
 
-              {/* Chart Renderer */}
-              <motion.div
-                className="bg-white/90 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl overflow-hidden"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1.8 }}
-                whileHover={{ y: -5 }}
-              >
+              {/* Two Column Layout: Table and Chart */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Data Table */}
                 <motion.div
-                  className="p-6 border-b border-slate-200/50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 2 }}
+                  className="bg-white/90 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl overflow-hidden"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
                 >
-                  <h2 className="text-xl font-semibold text-slate-800 flex items-center">
-                    <motion.span
-                      className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        delay: 0.5,
-                      }}
-                    ></motion.span>
-                    Data Visualization
-                  </h2>
+                  <div className="p-4 border-b border-slate-200/50">
+                    <h2 className="text-lg font-semibold text-slate-800 flex items-center">
+                      <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mr-3"></span>
+                      Data Table
+                    </h2>
+                  </div>
+                  <div className="overflow-auto max-h-[600px]">
+                    {user && <UserDataViewer email={user.email} />}
+                  </div>
                 </motion.div>
+
+                {/* Chart Visualization */}
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 2.2 }}
+                  className="bg-white/90 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl overflow-hidden"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
                 >
-                  <ChartRenderer
-                    data={displayData}
-                    xField={displayX}
-                    yField={displayY}
-                    chartType={displayType}
-                  />
+                  <div className="p-4 border-b border-slate-200/50">
+                    <h2 className="text-lg font-semibold text-slate-800 flex items-center">
+                      <motion.span
+                        className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                        }}
+                      ></motion.span>
+                      Data Visualization
+                    </h2>
+                  </div>
+                  <div className="p-4">
+                    <ChartRenderer
+                      data={displayData}
+                      xField={displayX}
+                      yField={displayY}
+                      chartType={displayType}
+                    />
+                  </div>
                 </motion.div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
