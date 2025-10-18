@@ -103,10 +103,17 @@ export default function DashboardPage() {
               endpoint={undefined}
               onSelect={(item) => {
                 // fetch the content body from API if needed and trigger processing
+                const selected = Array.isArray(item) ? item[0] : item;
+                const contentId = selected?.id;
+                if (!contentId) {
+                  setError("Invalid selection");
+                  return;
+                }
+
                 const API_BASE = (
                   process.env.NEXT_PUBLIC_API_URL || ""
                 ).replace(/\/$/, "");
-                fetch(`${API_BASE}/contents/${item.id}`, {
+                fetch(`${API_BASE}/contents/${contentId}`, {
                   credentials: "include",
                 })
                   .then((r) => r.json())
