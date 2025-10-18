@@ -73,7 +73,10 @@ export default function Sidebar({
               // Group by timestamp (if present)
               const groups: Record<string, ContentItem[]> = {};
               records.forEach((r: any, i: number) => {
-                const parsed = Array.isArray(r.parsed_rows) && r.parsed_rows.length ? r.parsed_rows : [];
+                const parsed =
+                  Array.isArray(r.parsed_rows) && r.parsed_rows.length
+                    ? r.parsed_rows
+                    : [];
                 const ts = r.timestamp || r.created_at || `unknown-${i}`;
                 if (!groups[ts]) groups[ts] = [];
                 parsed.forEach((row: any, idx: number) => {
@@ -163,21 +166,34 @@ export default function Sidebar({
           {Object.entries(grouped).map(([timestamp, group]) => (
             <li key={timestamp} className="mb-2">
               <button
-                className={`w-full flex items-center gap-2 text-left font-semibold text-blue-700 ${collapsed ? "p-2" : "p-3"}`}
-                onClick={() => setExpanded((prev) => ({ ...prev, [timestamp]: !prev[timestamp] }))}
+                className={`w-full flex items-center gap-2 text-left font-semibold text-blue-700 ${
+                  collapsed ? "p-2" : "p-3"
+                }`}
+                onClick={() =>
+                  setExpanded((prev) => ({
+                    ...prev,
+                    [timestamp]: !prev[timestamp],
+                  }))
+                }
               >
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                   🕒
                 </span>
                 {!collapsed && (
                   <span className="flex-1">
-                    {timestamp === "unknown-0" ? "Unknown time" : new Date(timestamp).toLocaleString()}
+                    {timestamp === "unknown-0"
+                      ? "Unknown time"
+                      : new Date(timestamp).toLocaleString()}
                   </span>
                 )}
                 {!collapsed && (
-                  <span className="text-xs text-slate-500">{group.length} item(s)</span>
+                  <span className="text-xs text-slate-500">
+                    {group.length} item(s)
+                  </span>
                 )}
-                <span className="ml-auto">{expanded[timestamp] ? "▼" : "►"}</span>
+                <span className="ml-auto">
+                  {expanded[timestamp] ? "▼" : "►"}
+                </span>
               </button>
               {expanded[timestamp] && (
                 <ul className="ml-4 mt-1 space-y-1">
@@ -186,7 +202,8 @@ export default function Sidebar({
                       className="w-full text-left text-blue-600 hover:underline text-xs py-1"
                       onClick={() => onSelect?.(group)}
                     >
-                      Visualize all ({group.length} row{group.length !== 1 ? "s" : ""})
+                      Visualize all ({group.length} row
+                      {group.length !== 1 ? "s" : ""})
                     </button>
                   </li>
                   {!collapsed &&
