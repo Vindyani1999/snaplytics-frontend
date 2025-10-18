@@ -97,39 +97,59 @@ export default function DashboardPage() {
     <ProtectedRoute>
       <Header />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50">
-        <div className="max-w-7xl mx-auto p-6 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-6">
-            <Sidebar
-              endpoint={undefined}
-              onSelect={(item) => {
-                // fetch the content body from API if needed and trigger processing
-                const selected = Array.isArray(item) ? item[0] : item;
-                const contentId = selected?.id;
-                if (!contentId) {
-                  setError("Invalid selection");
-                  return;
-                }
-
-                const API_BASE = (
-                  process.env.NEXT_PUBLIC_API_URL || ""
-                ).replace(/\/$/, "");
-                fetch(`${API_BASE}/contents/${contentId}`, {
-                  credentials: "include",
-                })
-                  .then((r) => r.json())
-                  .then((data) => {
-                    if (data?.body) {
-                      setRawContent(data.body);
-                      handleProcess();
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="flex gap-6">
+            <div className="sticky top-24 h-[calc(100vh-6rem)] w-64 flex-shrink-0">
+              <Sidebar
+                endpoint={undefined}
+                onSelect={(item) => {
+                  // Support both content id selection and direct rows from Sidebar
+                  const items = Array.isArray(item) ? item : [item];
+                  const first = items[0] as any;
+                  if (first?.rows) {
+                    // Build raw content from provided rows
+                    const rows = items.flatMap((it: any) => it.rows || []);
+                    const raw = JSON.stringify(rows);
+                    setRawContent(raw);
+                    // If user hasn't entered fields, infer from first row
+                    if (!requestedFieldsInput.trim() && rows.length) {
+                      const inferred = Object.keys(rows[0]).join(", ");
+                      setRequestedFieldsInput(inferred);
                     }
+                    handleProcess();
+                    return;
+                  }
+
+                  // Fallback to fetching content body by id
+                  const contentId = first?.id;
+                  if (!contentId) {
+                    setError("Invalid selection");
+                    return;
+                  }
+                  const API_BASE = (
+                    process.env.NEXT_PUBLIC_API_URL || ""
+                  ).replace(/\/$/, "");
+                  fetch(`${API_BASE}/contents/${contentId}`, {
+                    credentials: "include",
                   })
-                  .catch((err) => {
-                    console.error("Failed to load content body:", err);
-                    setError("Failed to load content");
-                  });
-              }}
-            />
-            <div>
+                    .then((r) => r.json())
+                    .then((data) => {
+                      if (data?.body) {
+                        setRawContent(data.body);
+                        handleProcess();
+                      }
+                    })
+                    .catch((err) => {
+                      console.error("Failed to load content body:", err);
+                      setError("Failed to load content");
+                    });
+                }}
+              />
+            </div>
+            <div
+              className="flex-1 overflow-y-auto"
+              style={{ maxHeight: "calc(100vh - 6rem)" }}
+            >
               {/* Profile Section */}
               {/* {user && (
             <div className="flex items-center gap-4 bg-white/80 border border-blue-100 rounded-xl p-4 mb-6 shadow">
@@ -219,7 +239,14 @@ export default function DashboardPage() {
                 transition={{ duration: 0.8, delay: 0.8 }}
                 whileHover={{ y: -5 }}
               >
-                <div className="flex flex-wrap items-center gap-4 mb-10">
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <input
+                    type="text"
+                    className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full md:w-80"
+                    placeholder="Enter fields (comma separated, e.g. name, price)"
+                    value={requestedFieldsInput}
+                    onChange={(e) => setRequestedFieldsInput(e.target.value)}
+                  />
                   <motion.button
                     onClick={handleProcess}
                     disabled={loading || !rawContent}
@@ -274,15 +301,17 @@ export default function DashboardPage() {
                       whileHover={{ y: -2 }}
                     >
                       <option value="">Choose X axis...</option>
-                      {requestedFieldsInput
-                        .split(",")
-                        .map((f) => f.trim())
-                        .filter(Boolean)
-                        .map((f) => (
-                          <option key={f} value={f}>
-                            {f}
-                          </option>
-                        ))}
+                      {(requestedFieldsInput.trim()
+                        ? requestedFieldsInput
+                            .split(",")
+                            .map((f) => f.trim())
+                            .filter(Boolean)
+                        : fields
+                      ).map((f) => (
+                        <option key={f} value={f}>
+                          {f}
+                        </option>
+                      ))}
                     </motion.select>
                   </motion.div>
 
@@ -303,15 +332,17 @@ export default function DashboardPage() {
                       whileHover={{ y: -2 }}
                     >
                       <option value="">Choose Y axis...</option>
-                      {requestedFieldsInput
-                        .split(",")
-                        .map((f) => f.trim())
-                        .filter(Boolean)
-                        .map((f) => (
-                          <option key={f} value={f}>
-                            {f}
-                          </option>
-                        ))}
+                      {(requestedFieldsInput.trim()
+                        ? requestedFieldsInput
+                            .split(",")
+                            .map((f) => f.trim())
+                            .filter(Boolean)
+                        : fields
+                      ).map((f) => (
+                        <option key={f} value={f}>
+                          {f}
+                        </option>
+                      ))}
                     </motion.select>
                   </motion.div>
 
