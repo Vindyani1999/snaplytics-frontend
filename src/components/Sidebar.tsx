@@ -56,7 +56,7 @@ export default function Sidebar({
                 user.email
               )}`;
               console.debug("Sidebar falling back to user data URL:", udUrl);
-              const udRes = await fetch(udUrl, { credentials: "include" });
+                const udRes = await fetch(`${API_BASE}/get_user_data_by_email/${encodeURI(user.email)}`, { credentials: "include" });
               if (!udRes.ok)
                 throw new Error(`User data fetch failed: ${udRes.status}`);
               const udJson = await udRes.json();
