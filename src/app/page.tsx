@@ -274,11 +274,15 @@ export default function DashboardPage() {
                       whileHover={{ y: -2 }}
                     >
                       <option value="">Choose X axis...</option>
-                      {fields.map((f) => (
-                        <option key={f} value={f}>
-                          {f}
-                        </option>
-                      ))}
+                      {requestedFieldsInput
+                        .split(",")
+                        .map((f) => f.trim())
+                        .filter(Boolean)
+                        .map((f) => (
+                          <option key={f} value={f}>
+                            {f}
+                          </option>
+                        ))}
                     </motion.select>
                   </motion.div>
 
@@ -299,11 +303,15 @@ export default function DashboardPage() {
                       whileHover={{ y: -2 }}
                     >
                       <option value="">Choose Y axis...</option>
-                      {fields.map((f) => (
-                        <option key={f} value={f}>
-                          {f}
-                        </option>
-                      ))}
+                      {requestedFieldsInput
+                        .split(",")
+                        .map((f) => f.trim())
+                        .filter(Boolean)
+                        .map((f) => (
+                          <option key={f} value={f}>
+                            {f}
+                          </option>
+                        ))}
                     </motion.select>
                   </motion.div>
 
