@@ -278,7 +278,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               {/* <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-800">
                   Fields (comma-separated)
