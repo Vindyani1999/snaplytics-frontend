@@ -235,7 +235,7 @@ export default function DashboardPage() {
       <Sidebar onSelect={handleSidebarSelect} />
 
       {/* Main content shifted to the right of the sidebar */}
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 ml-72">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 ml-64">
         {/* Sticky title and controls */}
         <div className="sticky top-20 z-20 bg-gradient-to-br from-slate-50/90 via-blue-50/90 to-purple-50/90 backdrop-blur border-b border-white/30">
           <motion.div
