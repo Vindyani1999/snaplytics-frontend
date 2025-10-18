@@ -250,7 +250,7 @@ export default function DashboardPage() {
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200 }}
             >
-              <img src="/icon128.png" alt="Chart Icon" className="w-8 h-8" />
+              <img src="/icon128.png" alt="Chart Icon" className="w-14 h-14" />
             </motion.div>
             <motion.h1
               className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent"

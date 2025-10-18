@@ -130,9 +130,9 @@ export default function Sidebar({
   return (
     <aside
       aria-label="Available content sidebar"
-      className="fixed left-4 top-20 z-40 h-[calc(100vh-5rem)]"
+      className="fixed h-[calc(100vh-5rem)]"
     >
-      <div className="h-full bg-white/90 border border-white/30 rounded-2xl shadow-md overflow-auto transition-all w-64 p-4">
+      <div className="h-full bg-white/90 border border-white/30 shadow-md overflow-auto transition-all w-64 p-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-slate-700">
             Available Content
