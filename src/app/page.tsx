@@ -238,7 +238,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 ml-64">
         {/* Sticky title and controls */}
         <div className="sticky top-20 z-20 bg-gradient-to-br from-slate-50/90 via-blue-50/90 to-purple-50/90 backdrop-blur border-b border-white/30">
-          <motion.div
+          {/* <motion.div
             className="text-center py-6"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -269,7 +269,7 @@ export default function DashboardPage() {
             >
               Transform your data into interactive visualizations
             </motion.p>
-          </motion.div>
+          </motion.div> */}
 
           {/* Controls */}
           <motion.div
