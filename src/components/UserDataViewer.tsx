@@ -24,9 +24,25 @@ export default function UserDataViewer({ data, fields }: UserDataViewerProps) {
 
   if (!data || data.length === 0) {
     return (
-      <div className="space-y-4">
-        <div className="text-sm text-slate-500">
-          No rows found. Select a timestamp group from the sidebar to view data.
+      <div className="flex flex-col items-center justify-center py-12">
+        <svg
+          className="w-16 h-16 text-slate-300 mb-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+          />
+        </svg>
+        <div className="text-sm text-slate-500 text-center max-w-xs">
+          <p className="font-semibold mb-1">No data available</p>
+          <p className="text-xs">
+            Select a timestamp group from the sidebar to view and analyze data.
+          </p>
         </div>
       </div>
     );
@@ -34,22 +50,35 @@ export default function UserDataViewer({ data, fields }: UserDataViewerProps) {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-auto border rounded p-2 max-h-[60vh]">
-        <table className="min-w-full text-left text-sm">
-          <thead className="sticky top-0 bg-white">
+      <div className="overflow-auto border border-slate-200 rounded-lg shadow-sm max-h-[60vh]">
+        <table className="min-w-full text-left text-sm divide-y divide-slate-200">
+          <thead className="sticky top-0 bg-gradient-to-r from-slate-50 to-slate-100 shadow-sm">
             <tr>
               {displayFields.map((field) => (
-                <th key={field} className="px-2 py-1 font-medium border-b">
+                <th
+                  key={field}
+                  className="px-4 py-3 font-bold text-xs text-slate-700 uppercase tracking-wider whitespace-nowrap"
+                >
                   {field}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-slate-100">
             {data.map((row, i) => (
-              <tr key={i} className="border-t hover:bg-slate-50">
+              <tr
+                key={i}
+                className={`
+                    transition-colors duration-150
+                    ${i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}
+                    hover:bg-indigo-50 hover:shadow-sm
+                  `}
+              >
                 {displayFields.map((field) => (
-                  <td key={field} className="px-2 py-1">
+                  <td
+                    key={field}
+                    className="px-4 py-3 text-slate-700 whitespace-nowrap"
+                  >
                     {row[field] !== undefined && row[field] !== null
                       ? String(row[field])
                       : "—"}

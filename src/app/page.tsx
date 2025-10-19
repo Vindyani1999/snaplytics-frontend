@@ -235,9 +235,9 @@ export default function DashboardPage() {
       <Sidebar onSelect={handleSidebarSelect} />
 
       {/* Main content shifted to the right of the sidebar */}
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 ml-64">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 ml-64">
         {/* Sticky title and controls */}
-        <div className="sticky top-20 z-20 bg-gradient-to-br from-slate-50/90 via-blue-50/90 to-purple-50/90 backdrop-blur border-b border-white/30">
+        <div className="sticky top-20 z-20 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 shadow-sm">
           {/* <motion.div
             className="text-center py-6"
             initial={{ opacity: 0, y: -20 }}
@@ -273,12 +273,12 @@ export default function DashboardPage() {
 
           {/* Controls */}
           <motion.div
-            className="bg-white/90 backdrop-blur-lg border border-white/30 px-6 py-4 rounded-3xl shadow-xl mx-4 mb-4"
+            className="px-6 py-5 mx-4 mb-4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
               {/* <div className="space-y-2">
                 <label className="block text-sm font-semibold text-slate-800">
                   Fields (comma-separated)
@@ -293,11 +293,11 @@ export default function DashboardPage() {
               </div> */}
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-slate-800">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">
                   X Axis
                 </label>
                 <select
-                  className="w-full border-2 border-slate-200 rounded-xl px-4 py-2 bg-white/80 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 bg-white shadow-sm hover:border-indigo-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200 text-sm font-medium"
                   value={xField}
                   onChange={(e) => setXField(e.target.value)}
                 >
@@ -311,11 +311,11 @@ export default function DashboardPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-slate-800">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">
                   Y Axis
                 </label>
                 <select
-                  className="w-full border-2 border-slate-200 rounded-xl px-4 py-2 bg-white/80 focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 bg-white shadow-sm hover:border-purple-400 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 text-sm font-medium"
                   value={yField}
                   onChange={(e) => setYField(e.target.value)}
                 >
@@ -330,11 +330,11 @@ export default function DashboardPage() {
 
               {singleFieldSelected ? (
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-800">
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">
                     Single-field analysis
                   </label>
                   <select
-                    className="w-full border-2 border-slate-200 rounded-xl px-4 py-2 bg-white/80 focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 bg-white shadow-sm hover:border-pink-400 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition-all duration-200 text-sm font-medium"
                     value={singleFieldMode}
                     onChange={(e) => setSingleFieldMode(e.target.value as any)}
                   >
@@ -346,11 +346,11 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-800">
+                  <label className="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">
                     Visualization Type
                   </label>
                   <select
-                    className="w-full border-2 border-slate-200 rounded-xl px-4 py-2 bg-white/80 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 bg-white shadow-sm hover:border-indigo-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200 text-sm font-medium"
                     value={chartType}
                     onChange={(e) => setChartType(e.target.value as any)}
                   >
@@ -362,35 +362,83 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-            {error && <div className="text-sm text-red-600 mt-2">{error}</div>}
+            {error && (
+              <div className="mt-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex items-center gap-2">
+                <svg
+                  className="w-5 h-5 text-red-500"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {error}
+              </div>
+            )}
           </motion.div>
         </div>
 
         {/* Content area: table + visualization */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
           {/* Data Table (left) */}
-          <div className="bg-white/90 backdrop-blur-lg border border-white/30 p-4 rounded-3xl shadow-xl min-h-[300px]">
-            <h3 className="text-lg font-semibold text-slate-800 flex items-center mb-3">
-              <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+          <motion.div
+            className="bg-white border border-slate-200 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 min-h-[300px]"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <h3 className="text-lg font-bold text-slate-800 flex items-center mb-4 pb-3 border-b border-slate-200">
+              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center mr-3 shadow-md">
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+              </span>
               Data Table
             </h3>
             <UserDataViewer data={data} fields={availableFields} />
-          </div>
+          </motion.div>
 
           {/* Visualization (right) */}
           <motion.div
-            className="bg-white/90 backdrop-blur-lg border border-white/30 rounded-3xl shadow-xl overflow-hidden min-h-[300px]"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            className="bg-white border border-slate-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden min-h-[300px]"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
           >
-            <div className="p-6 border-b border-slate-200/50">
-              <h2 className="text-xl font-semibold text-slate-800 flex items-center">
-                <span className="w-2 h-2 bg-gradient-to-r from-green-500 to-blue-500 rounded-full mr-3"></span>
+            <div className="p-6 border-b border-slate-200">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center">
+                <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mr-3 shadow-md">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
+                </span>
                 Data Visualization
               </h2>
             </div>
-            <div className="p-4 max-h-[60vh] overflow-y-auto">
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
               <ChartRenderer
                 data={displayData}
                 xField={displayX}
