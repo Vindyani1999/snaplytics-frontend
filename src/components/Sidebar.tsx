@@ -132,8 +132,8 @@ export default function Sidebar({
       className="fixed h-[calc(100vh-4rem)] top-16 left-0 z-30"
     >
       <div className="h-full bg-gradient-to-b from-white to-slate-50 border-r border-slate-200 shadow-xl overflow-auto transition-all w-64">
-        <div className="sticky top-0 bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-4 mb-4 shadow-md">
-          <h3 className="text-sm font-bold text-white uppercase tracking-wide flex items-center gap-2">
+        <div className="sticky top-0 bg-white px-4 py-4 mb-4 shadow-md">
+          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide flex items-center gap-2">
             <svg
               className="w-5 h-5"
               fill="none"
