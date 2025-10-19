@@ -374,13 +374,7 @@ export default function DashboardPage() {
               <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
               Data Table
             </h3>
-            {user ? (
-              <UserDataViewer email={user.email} />
-            ) : (
-              <div className="text-sm text-slate-600">
-                Sign in to load your data.
-              </div>
-            )}
+            <UserDataViewer data={data} fields={availableFields} />
           </div>
 
           {/* Visualization (right) */}

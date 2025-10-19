@@ -23,7 +23,6 @@ export default function Sidebar({
   const [items, setItems] = useState<ContentItem[]>([]);
   // Grouped by timestamp: { [timestamp]: ContentItem[] }
   const [grouped, setGrouped] = useState<Record<string, ContentItem[]>>({});
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -149,52 +148,23 @@ export default function Sidebar({
           {Object.entries(grouped).map(([timestamp, group]) => (
             <li key={timestamp} className="mb-2">
               <button
-                className="w-full flex items-center gap-2 text-left font-semibold text-blue-700 p-3"
-                onClick={() =>
-                  setExpanded((prev) => ({
-                    ...prev,
-                    [timestamp]: !prev[timestamp],
-                  }))
-                }
+                className="w-full flex items-center gap-2 text-left font-semibold text-blue-700 p-3 rounded-lg hover:bg-blue-50 transition-colors border border-blue-200"
+                onClick={() => onSelect?.(group)}
               >
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                   🕒
                 </span>
-                <span className="flex-1">
-                  {timestamp === "unknown-0"
-                    ? "Unknown time"
-                    : new Date(timestamp).toLocaleString()}
-                </span>
-                <span className="text-xs text-slate-500">
-                  {group.length} item(s)
-                </span>
-                <span className="ml-auto">
-                  {expanded[timestamp] ? "▼" : "►"}
-                </span>
+                <div className="flex-1">
+                  <div className="font-semibold text-sm">
+                    {timestamp === "unknown-0"
+                      ? "Unknown time"
+                      : new Date(timestamp).toLocaleString()}
+                  </div>
+                  <div className="text-xs text-slate-500 mt-0.5">
+                    {group.length} item{group.length !== 1 ? "s" : ""}
+                  </div>
+                </div>
               </button>
-              {expanded[timestamp] && (
-                <ul className="ml-4 mt-1 space-y-1">
-                  <li>
-                    <button
-                      className="w-full text-left text-blue-600 hover:underline text-xs py-1"
-                      onClick={() => onSelect?.(group)}
-                    >
-                      Visualize all ({group.length} row
-                      {group.length !== 1 ? "s" : ""})
-                    </button>
-                  </li>
-                  {group.map((it) => (
-                    <li key={it.id}>
-                      <button
-                        onClick={() => onSelect?.(it)}
-                        className="w-full text-left rounded hover:bg-blue-50 px-2 py-1 text-slate-700 text-xs"
-                      >
-                        {it.title}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
           ))}
         </ul>
